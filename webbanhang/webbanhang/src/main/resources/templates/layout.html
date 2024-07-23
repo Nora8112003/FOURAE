@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Layout</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" >
+</head>
+<style>
+    .team .row .fa{
+    border: 1px solid #666;
+    padding: 4px 5px;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.5 ease;
+}
+
+.team .row .fa:hover{
+    color: #fff;
+    background: rgb(0,200,255);
+}
+
+.team .row .col-md-5,
+.team .row .col-md-6{
+    box-shadow: 0px 5px 12px rgba(0,0,0,0.2);
+}
+
+.team .row .col-md-5:hover,
+.team .row .col-md-6:hover{
+    transform: translateY(-10px);
+    transition: all 0.5s;
+}
+
+    .footer .box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(25rem,1fr));
+    padding: 1rem 0 ;
+    text-align: center;
+}
+
+.footer .box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(25rem,1fr));
+    padding: 1rem 0 ;
+ }
+
+.footer .box-container .box h3{
+    font-size: 2.2rem;
+    color: var(--black);
+    padding: 1rem 0;
+    text-align: left;
+}
+
+.footer .box-container .box a{
+    display: block;
+    font-size: 1.4rem;
+    color: var(--light-color);
+    padding: 1rem 0;
+    text-decoration: none;
+    text-align: left;
+}
+
+.footer .box-container .box a i{
+    color: var(--orange);
+    padding-right: 0.5rem;
+}
+
+.footer .box-container .box a:hover i{
+    padding-right: 2rem;
+}
+
+.footer .credit{
+    border-top: var(--border);
+    margin-top: 2rem;
+    padding: 0 1rem;
+    padding-top: 2.5rem;
+    font-size: 2rem;
+    color: var(--light-color);
+    text-align: center;
+}
+</style>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+    <div class="container-fluid"><a class="navbar-brand text-white brand-highlight" href="/home">FOURAE</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN')"><a class="nav-link text-white active" aria-current="page"
+                                        href="/products/products">SẢN PHẨM</a></li>
+                <li class="nav-item"><a class="nav-link text-white active" aria-current="page"
+                                        href="/cart">GIỎ HÀNG</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="/categories" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        DANH MỤC
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown" data-bs-auto-close="outside">
+                        <!-- Populate categories dynamically using Thymeleaf -->
+                        <li th:each="category : ${categories}" class="dropdown">
+                            <a class="dropdown-item category-link" th:data-category-id="${category.id}" th:text="${category.name}" th:href="@{'/products/byCategory/' + ${category.id}}"></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/categories/add}"
+                                                                                 class="nav-link text-white">THÊM MỚI DANH MỤC</a></li>
+                <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/users}"
+                                                                                 class="nav-link text-white">QUẢN LÝ NGƯỜI DÙNG</a></li>
+                <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/orders}"
+                                                                                 class="nav-link text-white">QUẢN LÝ ĐƠN HÀNG</a></li>
+                <li class="nav-item dropdown" sec:authorize="hasAnyAuthority('ADMIN')">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownStats" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        THỐNG KÊ ĐƠN HÀNG
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownStats">
+                        <li><a class="dropdown-item" href="#">Đơn hàng hôm nay</a></li>
+                        <li><a class="dropdown-item" href="#">Đơn hàng trong tuần</a></li>
+                        <li><a class="dropdown-item" href="#">Đơn hàng trong tháng</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Thống kê chi tiết</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item">
+                    <div class="d-flex">
+                        <form th:action="@{/products/search}" method="get" class="d-flex align-items-center">
+                            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search" name="keyword">
+                            <button class="btn btn-outline-light btn-sm" type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                </li>
+                <li class="nav-item d-flex align-items-center" sec:authorize="isAuthenticated()"><span
+                        class="navbar-text text-white"> Xin chào, <span sec:authentication="name"
+                                                                        style="margin-right: 20px;"></span> </span></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-outline-light" type="submit">Đăng xuất</button>
+                    </form>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="btn btn-outline-light" href="/login">Đăng nhập</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container mt-5">
+    <section layout:fragment="content"> <!-- Nội dung cụ thể của từng trang sẽ được đặt tại đây --> </section>
+</div>
+<section class="team pt-sm-5 pb-sm-5" id="team" style="padding:100px 0 ;">
+    <div class="container">
+        <div class="row">
+            <h2 class="text-center text-primary pb-sm-5" style="font-weight:600;">TEAM 7</h2>
+            <p class="text-center ps-sm-6 pe-sm-5">Giới thiệu sơ lược về team của chúng tôi, để ủng hộ chúng tôi hãy ting ting đừng dùng lời nói !</p>
+
+            <div class="col-sm-5 col-md-5 mt-sm-3 mb-sm-4 p-sm-3" style="display:flex; background:#fff; margin:12px 8px; padding:8px;">
+                <img src="./img/team/team-1.jpg" alt="" width="80px" height="80px" class="rounded-pill">
+                <div class="content ms-sm-3">
+                    <h3 class="text-info">Ngô Chử Tịch</h3>
+                    <p>Nhóm trưởng</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui eius debitis harum aperiam sint officia. A autem minus rerum eveniet.</p>
+                    <i class="fa fa-twitter me-sm-3"></i>
+                    <i class="fa fa-facebook me-sm-3"></i>
+                    <i class="fa fa-instagram me-sm-3"></i>
+                    <i class="fa fa-linkedin me-sm-3"></i>
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-md-6 mt-sm-3 mb-sm-4 p-sm-3 ms-md-1" style="display:flex; background:#fff; margin:12px 8px; padding:8px;">
+                <img src="./img/team/team-2.jpg" alt="" width="80px" height="80px" class="rounded-pill">
+                <div class="content ms-sm-3">
+                    <h3 class="text-info">Nguyễn Minh Phương</h3>
+                    <p>Thành viên</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui eius debitis harum aperiam sint officia. A autem minus rerum eveniet.</p>
+                    <i class="fa fa-twitter me-sm-3"></i>
+                    <i class="fa fa-facebook me-sm-3"></i>
+                    <i class="fa fa-instagram me-sm-3"></i>
+                    <i class="fa fa-linkedin me-sm-3"></i>
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-md-5 mt-sm-3 mb-sm-4 p-sm-3" style="display:flex; background:#fff; margin:12px 8px; padding:8px;">
+                <img src="./img/team/team-3.jpg" alt="" width="80px" height="80px" class="rounded-pill">
+                <div class="content ms-sm-3">
+                    <h3 class="text-info">Nguyễn Phú Hữu</h3>
+                    <p>Thành viên</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui eius debitis harum aperiam sint officia. A autem minus rerum eveniet.</p>
+                    <i class="fa fa-twitter me-sm-3"></i>
+                    <i class="fa fa-facebook me-sm-3"></i>
+                    <i class="fa fa-instagram me-sm-3"></i>
+                    <i class="fa fa-linkedin me-sm-3"></i>
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-md-6 mt-sm-3 mb-sm-4 p-sm-3 ms-md-1" style="display:flex; background:#fff; margin:12px 8px; padding:8px;">
+                <img src="./img/team/team-4.jpg" alt="" width="80px" height="80px" class="rounded-pill">
+                <div class="content ms-sm-3">
+                    <h3 class="text-info">Trương Thịnh Phát</h3>
+                    <p>Thành viên </p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui eius debitis harum aperiam sint officia. A autem minus rerum eveniet.</p>
+                    <i class="fa fa-twitter me-sm-3"></i>
+                    <i class="fa fa-facebook me-sm-3"></i>
+                    <i class="fa fa-instagram me-sm-3"></i>
+                    <i class="fa fa-linkedin me-sm-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<footer class="footer" >
+    <div class="box-container">
+
+        <div class="box">
+            <h3>Trường Đại học Văn Lang</h3>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Trụ sở: 45 Nguyễn Khắc Nhu, P. Cô Giang, Q.1, TP. HCM</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Cơ sở 2: 233A Phan Văn Trị, P.11, Q. Bình Thạnh, TP. HCM</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Cơ sở 3: 69/68 Đặng Thùy Trâm, P. 13, Q. Bình Thạnh, TP. HCM</a>
+        </div>
+
+        <div class="box">
+            <h3>Contact info</h3>
+            <a href="https://www.facebook.com/itvlu"><i class="fa-brands fa-facebook"></i> Đại học Văn Lang</a>
+            <a href="#"><i class="fas fa-phone"></i> 028.71099240</a>
+            <a href="#"><i class="fas fa-envelope"></i> http://mail.vanlanguni.vn</a>
+        </div>
+    </div>
+    <div class="credit">&copy; <span>Website 4AESN</span> | All rights reserved</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
